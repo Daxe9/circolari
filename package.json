@@ -1,0 +1,10 @@
+{
+    "name": "circolare",
+    "version": "1.0.0",
+    "license": "MIT",
+    "main": "main.js",
+    "dependencies": {
+        "axios": "^0.27.2",
+        "jsdom": "^20.0.0"
+    }
+}
