@@ -2,9 +2,19 @@
     "name": "circolare",
     "version": "1.0.0",
     "license": "MIT",
-    "main": "main.js",
+    "main": "src/main.js",
+    "type": "module",
+    "scripts": {
+        "build": "rollup -c",
+        "dev": "rollup -c && node dist/bundle.js",
+        "demo": "echo \"Hello $npm_config_filename \""
+    },
     "dependencies": {
         "axios": "^0.27.2",
+        "dotenv": "^16.0.1",
         "jsdom": "^20.0.0"
+    },
+    "devDependencies": {
+        "rollup": "^2.78.1"
     }
 }

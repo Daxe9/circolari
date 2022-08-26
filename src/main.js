@@ -1,35 +1,17 @@
-const axios = require("axios");
-const fsP = require("fs/promises");
-const fs = require("fs");
-const { JSDOM } = require("jsdom");
+import IOManager from "./IO";
+import axios from "axios";
+import { JSDOM } from "jsdom";
+import dotenv from "dotenv";
+import { resolve, dirname } from "path";
+dotenv.config({ path: resolve(dirname("../"), "./.env") });
 
-const filename = "circolari.txt";
-
-function writeDataIntoFile(data) {
-    try {
-        fs.writeFileSync(filename, data);
-    } catch (error) {
-        console.log(error);
-        process.exit(1);
-    }
-}
-
-async function getDataFromFile() {
-    try {
-        const data = await fsP.readFile("./" + filename, "utf-8");
-
-        return JSON.parse(data);
-    } catch (error) {
-        console.log(error);
-        process.exit(1);
-    }
-}
+const filename = process.env.FILENAME;
+const URL = process.env.URL;
+const IO = new IOManager(filename);
 
 async function getDataFromUrl() {
     // fetch the html file
-    let page = await axios.get(
-        "https://web.spaggiari.eu/sdg/app/default/comunicati.php?sede_codice=FIIT0009&referer=www.itismeucci.net"
-    );
+    let page = await axios.get(URL);
     // convert it to text
     page = await page.data;
     const dom = new JSDOM(page);
@@ -47,7 +29,7 @@ async function getDataFromUrl() {
 
 (async () => {
     let isChanged = false;
-    const oldData = await getDataFromFile();
+    const oldData = await IO.readFile();
     const newData = await getDataFromUrl();
 
     // compare old and new data
@@ -66,7 +48,7 @@ async function getDataFromUrl() {
         }
     }
 
-    // if nothing changed, log and rewriet the file
+    // if nothing changed, log and rewrite the file
     if (!isChanged) console.log("No changes");
-    writeDataIntoFile(JSON.stringify(newData));
+    await IO.writeFile(JSON.stringify(newData));
 })();
