@@ -2,7 +2,7 @@ import IOManager from "./IO.js";
 import axios from "axios";
 import { JSDOM } from "jsdom";
 
-const filename = "circolari.json";
+const filename = "./circolari.json";
 const URL =
     "https://web.spaggiari.eu/sdg/app/default/comunicati.php?sede_codice=FIIT0009&referer=www.itismeucci.net";
 const IO = new IOManager(filename);
