@@ -1,12 +1,10 @@
 import IOManager from "./IO.js";
 import axios from "axios";
 import { JSDOM } from "jsdom";
-import dotenv from "dotenv";
-import { resolve, dirname } from "path";
-dotenv.config({ path: resolve(dirname("../"), "./.env") });
 
-const filename = process.env.FILENAME;
-const URL = process.env.URL;
+const filename = "circolari.json";
+const URL =
+    "https://web.spaggiari.eu/sdg/app/default/comunicati.php?sede_codice=FIIT0009&referer=www.itismeucci.net";
 const IO = new IOManager(filename);
 async function getDataFromUrl() {
     // fetch the html file
@@ -42,23 +40,28 @@ async function getDataFromUrl() {
     const oldData = await IO.readFile();
     const newData = await getDataFromUrl();
 
-    // compare old and new data
-    for (let i = 0; i < oldData.length; i++) {
-        if (oldData[i].title !== newData[i].title) {
-            for (let j = i; j < oldData.length; j++) {
-                if (oldData[i].title == newData[j].title) {
-                    isChanged = true;
-                    break;
+    if (oldData) {
+        // compare old and new data
+        for (let i = 0; i < oldData.length; i++) {
+            if (oldData[i].title !== newData[i].title) {
+                for (let j = i; j < oldData.length; j++) {
+                    if (oldData[i].title == newData[j].title) {
+                        isChanged = true;
+                        break;
+                    }
+                    console.log(newData[j]);
                 }
-                console.log(newData[j]);
+            }
+            if (isChanged) {
+                break;
             }
         }
-        if (isChanged) {
-            break;
+        if (!isChanged) console.log("No changes");
+    } else {
+        for (let i = 0; i < newData.length; i++) {
+            console.log(newData[i]);
         }
     }
-
     // // if nothing changed, log and rewrite the file
-    if (!isChanged) console.log("No changes");
     await IO.writeFile(JSON.stringify(newData));
 })();
